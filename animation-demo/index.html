@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>دموی ویرال — انیمیشن کوتاه</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@500;700;800&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #071018;
+      --phone: #0d1a24;
+      --foam: #f4f7f2;
+      --mute: #a8b9b0;
+      --sun: #ffb347;
+      --mint: #5fd4a0;
+      --coral: #ff6b5a;
+      --sky: #6ec8ff;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      background:
+        radial-gradient(ellipse at 20% 10%, rgba(95, 212, 160, 0.12), transparent 40%),
+        radial-gradient(ellipse at 80% 90%, rgba(255, 107, 90, 0.1), transparent 40%),
+        var(--bg);
+      color: var(--foam);
+      font-family: "Vazirmatn", sans-serif;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .shell {
+      width: min(92vw, 420px);
+      display: grid;
+      gap: 0.85rem;
+      justify-items: center;
+    }
+
+    .meta {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.75rem;
+      opacity: 0.85;
+      font-size: 0.82rem;
+    }
+
+    .meta strong {
+      font-family: "Bebas Neue", sans-serif;
+      letter-spacing: 0.06em;
+      font-size: 1.35rem;
+      font-weight: 400;
+    }
+
+    .phone {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 9 / 16;
+      max-height: min(78vh, 720px);
+      border-radius: 28px;
+      overflow: hidden;
+      background: var(--phone);
+      box-shadow:
+        0 0 0 2px rgba(244, 247, 242, 0.08),
+        0 30px 80px rgba(0, 0, 0, 0.55);
+    }
+
+    .scene {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease;
+    }
+
+    .scene.on { opacity: 1; }
+
+    .sky {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, #1a3a4a 0%, #2a5a4a 38%, #3d6b3a 62%, #2a4030 100%);
+    }
+
+    .sky.night {
+      background:
+        linear-gradient(180deg, #0a1520 0%, #122838 45%, #1a3030 100%);
+    }
+
+    .sun {
+      position: absolute;
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #ffe29a, var(--sun) 55%, #ff8a3d);
+      top: 12%;
+      left: 14%;
+      box-shadow: 0 0 40px rgba(255, 179, 71, 0.55);
+      animation: bob 1.4s ease-in-out infinite;
+    }
+
+    @keyframes bob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(6px); }
+    }
+
+    .cloud {
+      position: absolute;
+      height: 28px;
+      background: rgba(244, 247, 242, 0.88);
+      border-radius: 999px;
+      filter: blur(0.2px);
+      animation: drift linear infinite;
+    }
+
+    .cloud::before, .cloud::after {
+      content: "";
+      position: absolute;
+      background: inherit;
+      border-radius: 50%;
+    }
+
+    .cloud::before {
+      width: 34px; height: 34px; top: -16px; left: 18px;
+    }
+    .cloud::after {
+      width: 26px; height: 26px; top: -10px; right: 14px;
+    }
+
+    @keyframes drift {
+      from { transform: translateX(-20%); }
+      to { transform: translateX(120vw); }
+    }
+
+    .ground {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 34%;
+      background:
+        linear-gradient(180deg, #4a7a3a 0%, #2f5230 40%, #243828 100%);
+    }
+
+    .ground::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto auto 0;
+      width: 100%;
+      height: 18px;
+      background: repeating-linear-gradient(
+        90deg,
+        #5a8f45 0 18px,
+        #4d7c3c 18px 36px
+      );
+      opacity: 0.55;
+    }
+
+    .stall {
+      position: absolute;
+      bottom: 28%;
+      right: 10%;
+      width: 46%;
+      height: 28%;
+      background: #8b4a2b;
+      border-radius: 8px 8px 0 0;
+      box-shadow: inset 0 10px 0 #a85a34;
+    }
+
+    .stall::before {
+      content: "";
+      position: absolute;
+      top: -18%;
+      left: -8%;
+      right: -8%;
+      height: 28%;
+      background: #c45c3a;
+      clip-path: polygon(0 100%, 8% 0, 92% 0, 100% 100%);
+    }
+
+    .sign {
+      position: absolute;
+      top: 18%;
+      left: 10%;
+      right: 10%;
+      text-align: center;
+      font-weight: 800;
+      font-size: 0.78rem;
+      color: #fff4e6;
+      background: rgba(0,0,0,0.25);
+      padding: 0.2rem 0.35rem;
+      border-radius: 4px;
+    }
+
+    .bread {
+      position: absolute;
+      width: 42px;
+      height: 22px;
+      background: linear-gradient(180deg, #f0c98a, #d49a4a);
+      border-radius: 40% 40% 35% 35%;
+      bottom: 34%;
+      right: 22%;
+      box-shadow: 0 4px 0 #b07a38;
+      transition: transform 0.25s ease, left 0.35s ease, bottom 0.35s ease, right 0.35s ease;
+    }
+
+    .bread.stolen {
+      right: auto;
+      left: 28%;
+      bottom: 42%;
+      transform: rotate(-25deg) scale(0.9);
+    }
+
+    .vendor, .bird, .kid {
+      position: absolute;
+      bottom: 30%;
+      transition: transform 0.2s ease, left 0.35s ease, right 0.35s ease, bottom 0.35s ease;
+    }
+
+    .vendor { right: 28%; width: 54px; height: 86px; }
+    .bird { left: -20%; width: 52px; height: 36px; z-index: 3; }
+    .kid { left: 12%; width: 48px; height: 78px; bottom: 29%; }
+
+    .body {
+      position: absolute;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 34px;
+      height: 40px;
+      border-radius: 12px 12px 8px 8px;
+    }
+
+    .vendor .body { background: #2f6f8f; }
+    .kid .body { background: #d45d8d; width: 30px; height: 34px; }
+
+    .head {
+      position: absolute;
+      bottom: 54px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #f0c2a0;
+      box-shadow: inset -4px -2px 0 rgba(0,0,0,0.08);
+    }
+
+    .kid .head { width: 24px; height: 24px; bottom: 46px; }
+
+    .hair {
+      position: absolute;
+      top: -4px; left: 2px; right: 2px;
+      height: 12px;
+      border-radius: 12px 12px 0 0;
+      background: #2a2118;
+    }
+
+    .legs {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 28px;
+      height: 18px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .legs span {
+      width: 10px;
+      height: 18px;
+      background: #1d2430;
+      border-radius: 3px;
+    }
+
+    .bird-shape {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .bird-body {
+      position: absolute;
+      inset: 8px 8px 4px 4px;
+      background: #f4f7f2;
+      border-radius: 50% 50% 40% 40%;
+      box-shadow: inset -6px 0 0 rgba(0,0,0,0.06);
+    }
+
+    .bird-wing {
+      position: absolute;
+      width: 22px;
+      height: 14px;
+      background: #dfe8e2;
+      border-radius: 50%;
+      top: 8px;
+      left: 10px;
+      transform-origin: right center;
+      animation: flap 0.18s ease-in-out infinite;
+    }
+
+    @keyframes flap {
+      0%, 100% { transform: rotate(18deg); }
+      50% { transform: rotate(-28deg); }
+    }
+
+    .bird-beak {
+      position: absolute;
+      right: 0;
+      top: 14px;
+      width: 12px;
+      height: 8px;
+      background: var(--sun);
+      clip-path: polygon(0 0, 100% 50%, 0 100%);
+    }
+
+    .bird-eye {
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      background: #122;
+      border-radius: 50%;
+      top: 12px;
+      right: 14px;
+    }
+
+    .bird.fly-in { left: 42%; bottom: 46%; animation: swoop 0.45s ease-out forwards; }
+    .bird.escape { left: 110%; bottom: 62%; transition: left 0.55s ease-in, bottom 0.55s ease-in; }
+    .bird.land { left: 48%; bottom: 34%; }
+
+    @keyframes swoop {
+      from { transform: translate(-40px, -30px) rotate(-12deg); }
+      to { transform: translate(0, 0) rotate(0); }
+    }
+
+    .vendor.shocked { transform: translateX(8px) rotate(4deg); }
+    .vendor.chase { right: auto; left: 55%; bottom: 31%; }
+    .kid.point { transform: scale(1.05); }
+
+    .caption {
+      position: absolute;
+      left: 6%;
+      right: 6%;
+      bottom: 11%;
+      z-index: 5;
+      text-align: center;
+      font-weight: 800;
+      font-size: clamp(1rem, 4.4vw, 1.25rem);
+      line-height: 1.45;
+      text-shadow: 0 2px 0 #000, 0 0 12px rgba(0,0,0,0.7);
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 0.55rem 0.7rem;
+      border-radius: 12px;
+      opacity: 0;
+      transform: translateY(10px) scale(0.98);
+      transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+
+    .caption.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .hook {
+      position: absolute;
+      top: 7%;
+      left: 6%;
+      right: 6%;
+      z-index: 6;
+      font-family: "Bebas Neue", "Vazirmatn", sans-serif;
+      font-size: clamp(1.5rem, 7vw, 2.1rem);
+      letter-spacing: 0.04em;
+      color: var(--sun);
+      text-shadow: 0 3px 0 #000;
+      opacity: 0;
+      transform: scale(1.2);
+      transition: opacity 0.12s, transform 0.18s cubic-bezier(0.2, 1.4, 0.4, 1);
+      text-align: center;
+    }
+
+    .hook.show {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .progress {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 3px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--mint), var(--sun), var(--coral));
+      z-index: 8;
+    }
+
+    .ui-side {
+      position: absolute;
+      right: 3%;
+      bottom: 22%;
+      display: grid;
+      gap: 0.85rem;
+      z-index: 7;
+      opacity: 0.85;
+      font-size: 0.7rem;
+      text-align: center;
+    }
+
+    .ui-side span {
+      display: grid;
+      gap: 0.2rem;
+      justify-items: center;
+    }
+
+    .bubble {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      display: grid;
+      place-items: center;
+      font-size: 0.95rem;
+    }
+
+    .endcard {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 1.5rem;
+      text-align: center;
+      background:
+        radial-gradient(circle at 50% 40%, rgba(95,212,160,0.2), transparent 50%),
+        rgba(7, 16, 24, 0.92);
+      z-index: 10;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .endcard.show { opacity: 1; pointer-events: auto; }
+
+    .endcard h2 {
+      font-size: 1.45rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .endcard p {
+      color: var(--mute);
+      font-size: 0.92rem;
+      line-height: 1.6;
+      max-width: 16rem;
+    }
+
+    .controls {
+      display: flex;
+      gap: 0.55rem;
+      width: 100%;
+    }
+
+    button {
+      flex: 1;
+      border: 1px solid rgba(244,247,242,0.14);
+      background: rgba(244,247,242,0.06);
+      color: var(--foam);
+      font: inherit;
+      font-weight: 700;
+      padding: 0.7rem 0.9rem;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    button:hover { background: rgba(95, 212, 160, 0.16); transform: translateY(-1px); }
+    button.primary { background: rgba(95, 212, 160, 0.22); border-color: rgba(95, 212, 160, 0.4); }
+
+    .note {
+      font-size: 0.78rem;
+      color: var(--mute);
+      text-align: center;
+      line-height: 1.55;
+      max-width: 34ch;
+    }
+
+    .shock {
+      position: absolute;
+      top: 28%;
+      right: 18%;
+      font-size: 1.6rem;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: 0.15s;
+      z-index: 4;
+    }
+
+    .shock.show { opacity: 1; transform: scale(1.15); }
+
+    .speedlines {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        -18deg,
+        transparent 0 14px,
+        rgba(255,255,255,0.04) 14px 16px
+      );
+      opacity: 0;
+      transition: opacity 0.15s;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .speedlines.on { opacity: 1; }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="meta">
+      <strong>VIRAL DEMO · 60s</strong>
+      <span id="clock">۰۰:۰۰</span>
+    </div>
+
+    <div class="phone" id="phone" aria-label="انیمیشن کوتاه ویرال‌استایل">
+      <div class="progress" id="progress"></div>
+      <div class="hook" id="hook"></div>
+      <div class="caption" id="caption"></div>
+      <div class="shock" id="shock">؟!؟</div>
+      <div class="speedlines" id="speedlines"></div>
+
+      <div class="ui-side" aria-hidden="true">
+        <span><i class="bubble">❤</i>2.4M</span>
+        <span><i class="bubble">◆</i>18K</span>
+        <span><i class="bubble">↑</i>Share</span>
+      </div>
+
+      <!-- Scene: market -->
+      <div class="scene on" id="world">
+        <div class="sky" id="sky"></div>
+        <div class="sun" id="sun"></div>
+        <div class="cloud" style="top:16%; width:70px; animation-duration:9s;"></div>
+        <div class="cloud" style="top:22%; width:54px; animation-duration:12s; animation-delay:-3s; opacity:0.75;"></div>
+        <div class="ground"></div>
+        <div class="stall">
+          <div class="sign">نان تازه</div>
+        </div>
+        <div class="bread" id="bread"></div>
+
+        <div class="vendor" id="vendor">
+          <div class="head"><div class="hair"></div></div>
+          <div class="body"></div>
+          <div class="legs"><span></span><span></span></div>
+        </div>
+
+        <div class="kid" id="kid">
+          <div class="head"><div class="hair" style="background:#5a3a1a"></div></div>
+          <div class="body"></div>
+          <div class="legs"><span></span><span></span></div>
+        </div>
+
+        <div class="bird" id="bird">
+          <div class="bird-shape">
+            <div class="bird-body"></div>
+            <div class="bird-wing"></div>
+            <div class="bird-beak"></div>
+            <div class="bird-eye"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="endcard" id="endcard">
+        <div>
+          <h2>پایان · دموی ۶۰ ثانیه‌ای</h2>
+          <p>داستان اورجینال به سبک ویدیوهای ویرال — شخصیت، پس‌زمینه و محیط عوض شده. ساخته‌شده با کد.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="primary" id="play" type="button">پخش / از اول</button>
+      <button id="faster" type="button">سریع‌تر ×۱.۵</button>
+    </div>
+    <p class="note">
+      ویدیوی واقعی تیک‌تاک کپی نمی‌شود. این یک نمونه‌ی انیمیشنی کوتاه است
+      با ریتم ویرال (قلاب → شوک → تعقیب → پایان).
+    </p>
+  </div>
+
+  <script>
+    const caption = document.getElementById("caption");
+    const hook = document.getElementById("hook");
+    const progress = document.getElementById("progress");
+    const clock = document.getElementById("clock");
+    const endcard = document.getElementById("endcard");
+    const bird = document.getElementById("bird");
+    const bread = document.getElementById("bread");
+    const vendor = document.getElementById("vendor");
+    const kid = document.getElementById("kid");
+    const shock = document.getElementById("shock");
+    const speedlines = document.getElementById("speedlines");
+    const sky = document.getElementById("sky");
+
+    let rate = 1;
+    let timers = [];
+    let startedAt = 0;
+    let raf = 0;
+    const DURATION = 60000;
+
+    function clearTimers() {
+      timers.forEach(clearTimeout);
+      timers = [];
+      cancelAnimationFrame(raf);
+    }
+
+    function at(ms, fn) {
+      timers.push(setTimeout(fn, ms / rate));
+    }
+
+    function setCap(text) {
+      caption.classList.remove("show");
+      requestAnimationFrame(() => {
+        caption.textContent = text;
+        caption.classList.add("show");
+      });
+    }
+
+    function setHook(text, on = true) {
+      hook.textContent = text;
+      hook.classList.toggle("show", on && !!text);
+    }
+
+    function resetWorld() {
+      endcard.classList.remove("show");
+      bird.className = "bird";
+      bread.className = "bread";
+      vendor.className = "vendor";
+      kid.className = "kid";
+      shock.classList.remove("show");
+      speedlines.classList.remove("on");
+      sky.classList.remove("night");
+      setHook("", false);
+      caption.classList.remove("show");
+      caption.textContent = "";
+      progress.style.width = "0%";
+      clock.textContent = "۰۰:۰۰";
+    }
+
+    function tick() {
+      const elapsed = (performance.now() - startedAt) * rate;
+      const p = Math.min(100, (elapsed / DURATION) * 100);
+      progress.style.width = p + "%";
+      const sec = Math.min(60, Math.floor(elapsed / 1000));
+      clock.textContent = "۰۰:" + String(sec).padStart(2, "0");
+      if (elapsed < DURATION) raf = requestAnimationFrame(tick);
+    }
+
+    function play() {
+      clearTimers();
+      resetWorld();
+      startedAt = performance.now();
+      raf = requestAnimationFrame(tick);
+
+      // Viral beat sheet ~60s (scaled by rate)
+      at(0, () => {
+        setHook("صبر کن تا آخر");
+        setCap("صبح بازار… نان تازه آماده‌ست");
+      });
+      at(3500, () => {
+        setHook("", false);
+        setCap("فروشنده: امروز فروش خوب می‌شه");
+        kid.classList.add("point");
+      });
+      at(7500, () => {
+        setCap("یه مشتری کوچولو منتظره…");
+      });
+      at(11000, () => {
+        setHook("اما یهو…");
+        setCap("از آسمون یه چیزی اومد");
+        bird.classList.add("fly-in");
+      });
+      at(13500, () => {
+        setHook("", false);
+        bird.classList.remove("fly-in");
+        bird.classList.add("land");
+        setCap("پرنده: نون؟ مال منه");
+      });
+      at(16500, () => {
+        bread.classList.add("stolen");
+        bird.classList.add("escape");
+        shock.classList.add("show");
+        vendor.classList.add("shocked");
+        setCap("نان دزدیده شد!");
+        setHook("PLOT TWIST");
+      });
+      at(19000, () => {
+        shock.classList.remove("show");
+        setHook("", false);
+        speedlines.classList.add("on");
+        vendor.classList.add("chase");
+        setCap("فروشنده: وایساااا!");
+      });
+      at(24000, () => {
+        setCap("تعقیب توی بازار شروع شد");
+      });
+      at(29000, () => {
+        setCap("بچه: عمو بپر! نزدیک شدی!");
+      });
+      at(34000, () => {
+        speedlines.classList.remove("on");
+        setCap("پرنده روی دیوار نشست…");
+        bird.className = "bird";
+        bird.style.left = "62%";
+        bird.style.bottom = "58%";
+      });
+      at(38000, () => {
+        setHook("الان چی می‌شه؟");
+        setCap("فروشنده نزدیک شد… آروم…");
+      });
+      at(43000, () => {
+        setHook("", false);
+        bird.style.left = "110%";
+        bird.style.bottom = "70%";
+        bread.className = "bread";
+        bread.style.right = "auto";
+        bread.style.left = "18%";
+        bread.style.bottom = "36%";
+        setCap("پرنده دوباره فرار کرد");
+        speedlines.classList.add("on");
+      });
+      at(48000, () => {
+        speedlines.classList.remove("on");
+        setCap("ولی نان افتاد جلوی بچه");
+        setHook("پایان غیرمنتظره");
+      });
+      at(53000, () => {
+        setHook("", false);
+        kid.style.transform = "scale(1.08)";
+        setCap("بچه نان را برداشت و خندید");
+      });
+      at(57000, () => {
+        vendor.className = "vendor";
+        vendor.style.right = "28%";
+        vendor.style.left = "auto";
+        setCap("فروشنده: باشه… این یکی مهمان‌نوازیه");
+      });
+      at(60000, () => {
+        endcard.classList.add("show");
+        setCap("");
+        progress.style.width = "100%";
+      });
+    }
+
+    document.getElementById("play").addEventListener("click", play);
+    document.getElementById("faster").addEventListener("click", () => {
+      rate = rate === 1 ? 1.5 : rate === 1.5 ? 2 : 1;
+      document.getElementById("faster").textContent =
+        rate === 1 ? "سریع‌تر ×۱.۵" : rate === 1.5 ? "سریع‌تر ×۲" : "سرعت عادی ×۱";
+      play();
+    });
+
+    // Auto-start so it's show-ready
+    play();
+  </script>
+</body>
+</html>
