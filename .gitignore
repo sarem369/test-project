@@ -9,5 +9,5 @@ node_modules/
 web/dist/
 .hefaaz-agent.json
 .env
-.env.*
-!.env.examplebackend/data-test/
+.env.local
+.env.*.localbackend/data-test/
