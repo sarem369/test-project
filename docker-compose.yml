@@ -1,0 +1,33 @@
+services:
+  api:
+    image: python:3.12-slim
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+      - hefaaz-data:/app/data
+    command: bash -lc "pip install -r requirements.txt && uvicorn app.main:app --host 0.0.0.0 --port 8080"
+    environment:
+      OLLAMA_HOST: http://host.docker.internal:11434
+      OLLAMA_MODEL: llama3.2
+      HEFAAZ_ADMIN_TOKEN: hefaaz-dev-token
+      HEFAAZ_DATA_DIR: /app/data
+    ports:
+      - "8080:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  web:
+    image: node:22-alpine
+    working_dir: /web
+    volumes:
+      - ./web:/web
+    command: sh -lc "npm install && npm run dev -- --host 0.0.0.0 --port 5173"
+    environment:
+      VITE_API_BASE: http://127.0.0.1:8080
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+
+volumes:
+  hefaaz-data:

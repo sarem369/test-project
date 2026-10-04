@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+backend/data/
+*.egg-info/
+.DS_Store
+node_modules/
+web/dist/
+.hefaaz-agent.json
+.env
+.env.*
+!.env.example

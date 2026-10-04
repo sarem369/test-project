@@ -1,0 +1,27 @@
+{
+  "devices": {
+    "d7e0c398-65b4-42a9-b58e-da1cd2db3136": {
+      "id": "d7e0c398-65b4-42a9-b58e-da1cd2db3136",
+      "name": "dev1",
+      "hostname": "",
+      "os_name": "",
+      "agent_token": "Ceb2M2KDoPublSA6Kw5xn4nPuIOjRG_b1qGMjg4Ow1k",
+      "status": "enrolled",
+      "inventory": {},
+      "created_at": "2026-10-04T06:01:11.660708+00:00",
+      "last_seen": null
+    }
+  },
+  "actions": {},
+  "events": [
+    {
+      "id": "0295b0c8-f60d-475b-8d53-c60602f4a94e",
+      "kind": "device_enrolled",
+      "message": "Device enrolled: dev1",
+      "meta": {
+        "device_id": "d7e0c398-65b4-42a9-b58e-da1cd2db3136"
+      },
+      "created_at": "2026-10-04T06:01:11.661393+00:00"
+    }
+  ]
+}
