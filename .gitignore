@@ -10,4 +10,4 @@ web/dist/
 .hefaaz-agent.json
 .env
 .env.*
-!.env.example
+!.env.examplebackend/data-test/
