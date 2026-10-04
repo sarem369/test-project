@@ -54,4 +54,9 @@ class ActionResultRequest(BaseModel):
 class HardenRequest(BaseModel):
     topic: str
     context: str = ""
-    language: Literal["fa", "en"] = "fa"
+    language: Literal["fa", "en"] = "en"
+
+
+class VendorSyncRequest(BaseModel):
+    vendor_ids: list[str] = Field(default_factory=list)
+    categories: list[str] = Field(default_factory=list)

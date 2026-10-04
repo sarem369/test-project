@@ -23,11 +23,16 @@ class Store:
 
     def _load(self) -> dict[str, Any]:
         if not self.path.exists():
-            return {"devices": {}, "actions": {}, "events": []}
+            return {"devices": {}, "actions": {}, "events": [], "vendor_updates": {}}
         try:
-            return json.loads(self.path.read_text(encoding="utf-8"))
+            data = json.loads(self.path.read_text(encoding="utf-8"))
         except (json.JSONDecodeError, OSError):
-            return {"devices": {}, "actions": {}, "events": []}
+            return {"devices": {}, "actions": {}, "events": [], "vendor_updates": {}}
+        data.setdefault("devices", {})
+        data.setdefault("actions", {})
+        data.setdefault("events", [])
+        data.setdefault("vendor_updates", {})
+        return data
 
     def _save(self) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)
@@ -178,6 +183,47 @@ class Store:
         with self._lock:
             events = list(self.data.get("events", []))
         return list(reversed(events[-limit:]))
+
+    def save_vendor_update(self, result: dict[str, Any]) -> dict[str, Any]:
+        vendor_id = result.get("vendor_id") or "unknown"
+        with self._lock:
+            self.data.setdefault("vendor_updates", {})[vendor_id] = result
+            self._save()
+        self.add_event(
+            "vendor_sync",
+            f"Vendor sync: {vendor_id} ({'ok' if result.get('ok') else 'failed'})",
+            {"vendor_id": vendor_id, "ok": bool(result.get("ok"))},
+        )
+        return result
+
+    def list_vendor_updates(self, category: str | None = None) -> list[dict[str, Any]]:
+        with self._lock:
+            updates = list(self.data.get("vendor_updates", {}).values())
+        if category:
+            # category is stored on vendor catalog, not always on update payload
+            updates = [u for u in updates if u.get("meta", {}).get("category") == category or u.get("category") == category]
+        return sorted(updates, key=lambda x: x.get("fetched_at") or "", reverse=True)
+
+    def vendor_update_bundle(self) -> dict[str, Any]:
+        with self._lock:
+            updates = dict(self.data.get("vendor_updates", {}))
+        indicators = []
+        for update in updates.values():
+            if not update.get("ok"):
+                continue
+            for item in update.get("items") or []:
+                if item.get("kind") in {"block_indicator", "malware_hash", "network_rules", "cve"}:
+                    indicators.append(
+                        {
+                            "vendor_id": update.get("vendor_id"),
+                            **item,
+                        }
+                    )
+        return {
+            "vendors": updates,
+            "indicators": indicators[:500],
+            "generated_at": utc_now(),
+        }
 
 
 store = Store()

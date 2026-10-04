@@ -130,6 +130,33 @@ def execute_action(action: str, params: dict[str, Any]) -> tuple[str, str, dict[
         code, out = run(["clamscan", "-r", "--bell", "-i", str(path)], timeout=300)
         return ("succeeded" if code in (0, 1) else "failed"), out[:8000], {"exit_code": code}
 
+    if action == "update_clamav_signatures":
+        if shutil.which("freshclam") is None:
+            return "failed", "freshclam is not installed", {}
+        code, out = run(["freshclam"], timeout=300)
+        return ("succeeded" if code == 0 else "failed"), out[:8000], {"exit_code": code}
+
+    if action == "apply_vendor_indicator_pack":
+        admin = os.getenv("HEFAAZ_ADMIN_TOKEN") or os.getenv("HEFAAZ_ENROLL_TOKEN")
+        if not admin:
+            return "failed", "Set HEFAAZ_ADMIN_TOKEN to download the vendor indicator bundle", {}
+        try:
+            resp = httpx.get(
+                f"{API}/api/vendors/bundle",
+                headers={"Authorization": f"Bearer {admin}"},
+                timeout=60,
+            )
+            resp.raise_for_status()
+            bundle = resp.json()
+            out_dir = Path(os.getenv("HEFAAZ_PACK_DIR", Path.home() / "hefaaz-packs"))
+            out_dir.mkdir(parents=True, exist_ok=True)
+            out_path = out_dir / "vendor-indicator-pack.json"
+            out_path.write_text(json.dumps(bundle, indent=2), encoding="utf-8")
+            count = len(bundle.get("indicators") or [])
+            return "succeeded", f"Wrote {count} indicators to {out_path}", {"path": str(out_path), "count": count}
+        except Exception as exc:
+            return "failed", str(exc), {}
+
     return "rejected", f"Action not allowed on agent: {action}", {}
 
 

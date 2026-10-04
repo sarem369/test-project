@@ -12,7 +12,7 @@
   --ok: #56c08d;
   --shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
   --radius: 18px;
-  font-family: "Vazirmatn", "IBM Plex Sans", sans-serif;
+  font-family: "Sora", "IBM Plex Sans", sans-serif;
   color: var(--text);
   background: var(--bg0);
   line-height: 1.6;
@@ -400,6 +400,55 @@ a {
 
 .muted {
   color: var(--muted);
+}
+
+.vendor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 0.8rem;
+}
+
+.vendor-card {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 0.9rem;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.vendor-card.selected {
+  border-color: rgba(31, 168, 154, 0.7);
+  box-shadow: inset 0 0 0 1px rgba(31, 168, 154, 0.35);
+}
+
+.vendor-card h4 {
+  margin: 0;
+}
+
+.vendor-card p {
+  color: var(--muted);
+  font-size: 0.92rem;
+  margin: 0.55rem 0;
+}
+
+.vendor-head {
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+  cursor: pointer;
+}
+
+.vendor-head input {
+  margin-top: 0.35rem;
+}
+
+.finding.ok {
+  border-inline-start-color: var(--ok);
+}
+
+a.btn {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
 }
 
 .stack {

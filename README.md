@@ -1,33 +1,66 @@
-# Hefaaz — پلتفرم حفاظت امنیتی با Ollama
+# Hefaaz — Defensive Security Platform on Ollama
 
-Hefaaz یک پلتفرم **دفاعی** است که روی موتور [Ollama](https://ollama.com) اجرا می‌شود تا برای کامپیوترها و سرویس‌های خودتان:
+Hefaaz is an **English-first**, defensive security platform that runs with [Ollama](https://ollama.com) and pulls protective updates from multiple security vendors across:
 
-- مشاوره و مرور امنیتی با هوش مصنوعی محلی
-- بررسی وضعیت امنیتی دستگاه‌ها (ایجنت راه دور)
-- اجرای اقدامات اصلاحی **تأیید‌شده و سفیدلیست‌شده**
-- راهنمای hardening و رفع مشکلات امنیتی رایج
+- Antivirus signature / endpoint protection feeds
+- Network security rule and reputation updates
+- Malware intelligence / hash / URL indicators
 
-این پروژه عمداً شامل تست نفوذ تهاجمی، اکسپلویت یا اسکن حمله نیست.
+It does **not** include offensive penetration-testing or exploit tooling.
 
-## اجزا
+## Components
 
-| بخش | مسیر | نقش |
+| Piece | Path | Role |
 |---|---|---|
-| Backend API | `backend/` | FastAPI + اتصال به Ollama + صف اقدامات |
-| Dashboard | `web/` | داشبورد فارسی/انگلیسی |
-| Agent | `agent/` | ایجنت نصب‌شونده روی دستگاه‌های مجاز |
+| Backend API | `backend/` | FastAPI + Ollama + multi-vendor sync + action queue |
+| Dashboard | `web/` | English operator console |
+| Agent | `agent/` | Authorized remote remediation agent |
 
-## پیش‌نیاز
+## Multi-vendor update model
+
+Hefaaz uses pluggable connectors:
+
+**Open / public defensive feeds (live sync):**
+- ClamAV signature mirror (Cisco Talos / ClamAV)
+- abuse.ch URLhaus
+- abuse.ch MalwareBazaar
+- Proofpoint Emerging Threats Open
+- NIST NVD CVE API
+- AlienVault OTX (API key optional)
+
+**Commercial connectors (credential-gated):**
+- Microsoft Defender / Graph
+- CrowdStrike Falcon
+- SentinelOne
+- Sophos Central
+- Cisco Talos
+- Palo Alto Networks Threat Prevention
+
+Set vendor credentials via environment variables, for example:
+
+```bash
+export HEFAAZ_OTX_API_KEY=...
+export HEFAAZ_MS_GRAPH_TOKEN=...
+export HEFAAZ_CROWDSTRIKE_CLIENT_ID=...
+export HEFAAZ_SENTINELONE_TOKEN=...
+export HEFAAZ_SOPHOS_CLIENT_ID=...
+export HEFAAZ_TALOS_API_KEY=...
+export HEFAAZ_PANW_API_KEY=...
+```
+
+Commercial adapters only activate with **your licensed API access**. Hefaaz does not redistribute proprietary vendor engine code.
+
+## Prerequisites
 
 - Python 3.11+
 - Node.js 20+
-- [Ollama](https://ollama.com) در حال اجرا با یک مدل (مثلاً `llama3.2`)
+- Ollama with a model (example: `llama3.2`)
 
 ```bash
 ollama pull llama3.2
 ```
 
-## اجرا سریع
+## Quick start
 
 ### 1) Backend
 
@@ -50,34 +83,37 @@ npm install
 npm run dev -- --host 0.0.0.0 --port 5173
 ```
 
-باز کنید: `http://localhost:5173`  
-توکن ادمین پیش‌فرض در UI: همان `HEFAAZ_ADMIN_TOKEN`.
+Open `http://localhost:5173` and use the same admin token.
 
-### 3) Agent روی یک دستگاه مجاز
+### 3) Agent on an authorized machine
 
 ```bash
 cd agent
 pip install -r requirements.txt
 export HEFAAZ_API=http://SERVER_IP:8080
-export HEFAAZ_ENROLL_TOKEN=<token-from-dashboard>
+export HEFAAZ_ENROLL_TOKEN=<admin-or-enroll-token>
+export HEFAAZ_ADMIN_TOKEN=<admin-token>   # needed to apply vendor packs
 python3 agent.py
 ```
 
-## قابلیت‌های دفاعی
+## Operator workflow
 
-- چت امنیتی با Ollama (مرور، hardening، رفع باگ امنیتی، راهنمای پاک‌سازی بدافزار سطح بالا)
-- ثبت و مانیتور دستگاه‌ها از راه دور
-- گزارش وضعیت: فایروال، به‌روزرسانی‌ها، کاربران، پروسه‌های مشکوک رایج
-- اقدامات اصلاحی فقط با تأیید اپراتور و از لیست سفید (مثلاً فعال‌سازی فایروال، پاک‌سازی کش موقت، اسکن امضای ساده)
-- پلی‌بوک‌های hardening آماده
+1. Open **Vendor updates** and sync open feeds (and commercial vendors if credentials are set).
+2. Review synced antivirus / network / malware indicators.
+3. Enroll devices and queue approved remediations:
+   - collect inventory
+   - update ClamAV signatures
+   - apply vendor indicator pack locally
+   - enable firewall / check package updates
+4. Use the Ollama assistant for English defensive guidance and hardening playbooks.
 
-## امنیت استقرار
+## Security notes
 
-- فقط روی شبکه‌های مورد اعتماد یا با TLS/VPN
-- توکن ادمین و توکن ثبت ایجنت را قوی انتخاب کنید
-- اقدامات راه دور فقط روی دستگاه‌هایی که مالک/مجاز هستید اجرا شود
-- قبل از اجرای remediation در production، تأیید دستی الزامی است
+- Deploy only on trusted networks or behind TLS/VPN.
+- Use strong admin and agent tokens.
+- Run remote actions only on systems you own or are contracted to manage.
+- Require operator approval before remediations in production.
 
-## لایسنس
+## License
 
 MIT

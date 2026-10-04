@@ -17,13 +17,16 @@ from .models import (
     EnrollResponse,
     HardenRequest,
     HeartbeatRequest,
+    VendorSyncRequest,
 )
 from .store import store
+from .vendors import list_vendors, sync_all, sync_vendor
+from .vendors.registry import get_vendor
 
 app = FastAPI(
     title="Hefaaz",
-    description="Defensive security platform powered by Ollama",
-    version="0.1.0",
+    description="English-first defensive security platform powered by Ollama with multi-vendor update connectors",
+    version="0.2.0",
 )
 
 app.add_middleware(
@@ -70,12 +73,69 @@ async def api_meta(_: None = Depends(require_admin)) -> dict[str, Any]:
     return {
         "allowed_actions": ALLOWED_ACTIONS,
         "hardening_topics": ollama_client.HARDENING_TOPICS,
+        "vendors": list_vendors(),
         "policy": {
             "mode": "defensive_only",
+            "language": "english_first",
             "remote_actions": "operator_approved_whitelist",
+            "multi_vendor_updates": True,
             "no_offensive_scanning": True,
         },
     }
+
+
+@app.get("/api/vendors")
+async def api_vendors(_: None = Depends(require_admin)) -> dict[str, Any]:
+    catalog = list_vendors()
+    updates = {u.get("vendor_id"): u for u in store.list_vendor_updates()}
+    merged = []
+    for vendor in catalog:
+        latest = updates.get(vendor["id"])
+        merged.append({**vendor, "latest_sync": latest})
+    return {"vendors": merged}
+
+
+@app.post("/api/vendors/sync")
+async def api_vendors_sync(body: VendorSyncRequest, _: None = Depends(require_admin)) -> dict[str, Any]:
+    results = []
+    if body.vendor_ids:
+        for vendor_id in body.vendor_ids:
+            if not get_vendor(vendor_id):
+                raise HTTPException(status_code=404, detail=f"Unknown vendor: {vendor_id}")
+            result = await sync_vendor(vendor_id)
+            vendor = get_vendor(vendor_id)
+            payload = result.to_dict()
+            payload["category"] = vendor.category if vendor else None
+            payload.setdefault("meta", {})["category"] = vendor.category if vendor else None
+            store.save_vendor_update(payload)
+            results.append(payload)
+    else:
+        synced = await sync_all(body.categories or None)
+        for result in synced:
+            vendor = get_vendor(result.vendor_id)
+            payload = result.to_dict()
+            payload["category"] = vendor.category if vendor else None
+            payload.setdefault("meta", {})["category"] = vendor.category if vendor else None
+            store.save_vendor_update(payload)
+            results.append(payload)
+    return {
+        "synced": len(results),
+        "ok_count": sum(1 for r in results if r.get("ok")),
+        "results": results,
+    }
+
+
+@app.get("/api/vendors/updates")
+async def api_vendor_updates(
+    category: str | None = None,
+    _: None = Depends(require_admin),
+) -> dict[str, Any]:
+    return {"updates": store.list_vendor_updates(category)}
+
+
+@app.get("/api/vendors/bundle")
+async def api_vendor_bundle(_: None = Depends(require_admin)) -> dict[str, Any]:
+    return store.vendor_update_bundle()
 
 
 @app.post("/api/chat", response_model=ChatResponse)

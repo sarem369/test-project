@@ -5,24 +5,23 @@ import httpx
 from .config import OLLAMA_HOST, OLLAMA_MODEL, SYSTEM_PROMPT
 
 
-OFFLINE_REPLY_FA = (
-    "اتصال به Ollama برقرار نشد. فعلاً پاسخ آفلاین دفاعی می‌دهم:\n"
-    "1) به‌روزرسانی‌های سیستم و اپلیکیشن را بررسی و نصب کنید.\n"
-    "2) فایروال را فعال و پورت‌های غیرضروری را ببندید.\n"
-    "3) رمزهای عبور قوی و 2FA را برای دسترسی‌های حساس فعال کنید.\n"
-    "4) فایل‌های مشکوک را حذف نکنید؛ ابتدا قرنطینه و سپس اسکن با آنتی‌ویروس معتبر.\n"
-    "5) لاگ‌ها و حساب‌های ناشناس تازه ایجاد‌شده را مرور کنید.\n"
-    "پس از روشن شدن Ollama دوباره پیام بدهید تا راهنمایی دقیق‌تر بگیریم."
-)
-
 OFFLINE_REPLY_EN = (
     "Could not reach Ollama. Offline defensive checklist:\n"
     "1) Install pending OS/app updates.\n"
     "2) Enable the firewall and close unused ports.\n"
-    "3) Use strong passwords and 2FA on sensitive accounts.\n"
-    "4) Quarantine suspicious files before scanning; avoid blind deletion.\n"
-    "5) Review logs and newly created accounts.\n"
+    "3) Sync antivirus / malware / network vendor update feeds in Hefaaz.\n"
+    "4) Use strong passwords and 2FA on sensitive accounts.\n"
+    "5) Quarantine suspicious files before scanning; avoid blind deletion.\n"
     "Retry after Ollama is running for tailored guidance."
+)
+
+OFFLINE_REPLY_FA = (
+    "Could not reach Ollama. Offline defensive checklist (English-first platform):\n"
+    "1) Install pending OS/app updates.\n"
+    "2) Enable the firewall and close unused ports.\n"
+    "3) Sync antivirus / malware / network vendor update feeds in Hefaaz.\n"
+    "4) Use strong passwords and 2FA on sensitive accounts.\n"
+    "5) Quarantine suspicious files before scanning; avoid blind deletion."
 )
 
 
