@@ -107,11 +107,12 @@ def create_dataloader(
     Returns:
         Configured DataLoader.
     """
+    pin_memory = bool(config.pin_memory and torch.cuda.is_available())
     return DataLoader(
         dataset,
         batch_size=config.batch_size,
         shuffle=config.shuffle if shuffle is None else shuffle,
         num_workers=config.num_workers,
-        pin_memory=config.pin_memory,
+        pin_memory=pin_memory,
         drop_last=False,
     )
