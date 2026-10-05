@@ -1,0 +1,64 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai-engine"
+version = "0.1.0"
+description = "A modular, scalable Python framework for deep learning: preprocessing, models, training, and inference."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "AI Engine Contributors" }]
+keywords = ["deep-learning", "pytorch", "training", "inference", "mlops"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "torch>=2.1.0",
+    "numpy>=1.24.0",
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
+    "pyyaml>=6.0",
+    "tqdm>=4.66.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.1.0",
+]
+export = [
+    "onnx>=1.15.0",
+    "onnxruntime>=1.16.0",
+]
+
+[project.scripts]
+ai-engine-train = "ai_engine.cli:train_main"
+ai-engine-infer = "ai_engine.cli:infer_main"
+
+[project.urls]
+Homepage = "https://github.com/example/ai-engine"
+Documentation = "https://github.com/example/ai-engine#readme"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["ai_engine*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
